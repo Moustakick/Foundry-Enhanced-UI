@@ -41,7 +41,7 @@
       "path": "lang/en.json"
     }
   ],
-  "url": "",
-  "manifest": "",
-  "download": ""
+  "url": "https://github.com/Moustakick/Foundry-Enhanced-UI",
+  "manifest": "https://github.com/Moustakick/Foundry-Enhanced-UI/archive/refs/tags/module.json",
+  "download": "https://github.com/Moustakick/Foundry-Enhanced-UI/archive/refs/tags/v1.0.0.zip"
 }

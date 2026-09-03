@@ -1,0 +1,332 @@
+/* ================================================
+   Better Combat UI — barre d'actions façon Solasta
+   Palette assortie aux autres modules (vert sombre / or), UI épurée et compacte.
+   ================================================ */
+
+/* ---------- Bouton de bascule ----------
+   Style mutualisé via la classe .bs-toggle-btn (styles/theme.css), positionné
+   automatiquement à la suite des autres via le registre partagé (scripts/_core.js). */
+
+/* ---------- Barre principale (bas-centre, façon Solasta) ---------- */
+.bcu-panel {
+  position: fixed;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%) scale(var(--bcu-scale, 1));
+  transform-origin: bottom center;
+  z-index: 200;
+  display: none;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  row-gap: 8px;
+  padding: 8px 14px;
+  max-width: 96vw;
+  background: linear-gradient(180deg, rgba(24, 38, 30, 0.97), rgba(15, 20, 17, 0.97));
+  border: 1px solid rgba(198, 168, 106, 0.55);
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
+}
+
+.bcu-panel.bcu-open {
+  display: flex;
+}
+
+.bcu-empty {
+  color: #c9c2b3;
+  font-size: 12px;
+  font-style: italic;
+  margin: 0;
+  padding: 4px 8px;
+}
+
+.bcu-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bcu-section-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a9a297;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Étalée plutôt que compressée : pas de max-width artificiel qui forçait un
+   retour à la ligne prématuré des icônes. */
+.bcu-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+/* ---------- Boutons de catégorie / action générique ---------- */
+.bcu-cat-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 42px;
+  height: 40px;
+  padding: 3px 2px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(198, 168, 106, 0.35);
+  border-radius: 6px;
+  color: #f2ede0;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.bcu-cat-btn i {
+  font-size: 14px;
+  color: var(--better-accent, #f0d9a3);
+}
+
+.bcu-cat-btn span {
+  font-size: 7px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  text-align: center;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.bcu-cat-btn:hover:not(.bcu-disabled) {
+  background: rgba(198, 168, 106, 0.2);
+  border-color: rgba(198, 168, 106, 0.6);
+  transform: translateY(-2px);
+}
+
+.bcu-cat-btn.bcu-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.bcu-cat-btn.bcu-has-item {
+  border-color: rgba(89, 201, 122, 0.5);
+}
+
+.bcu-cat-btn.bcu-has-item i {
+  color: #59c97a;
+}
+
+/* Icône propre à l'objet (catégorie à une seule option) plutôt que l'icône
+   générique de la catégorie */
+.bcu-cat-icon-img {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(198, 168, 106, 0.4);
+}
+
+/* Petit bouton "ouvrir la fiche", posé en coin d'un bouton de catégorie à
+   une seule option */
+.bcu-cat-sheet-btn {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  border: 1px solid rgba(198, 168, 106, 0.6);
+  border-radius: 50%;
+  background: rgba(15, 20, 17, 0.95);
+  color: var(--better-accent, #f0d9a3);
+  font-size: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.bcu-cat-btn:hover .bcu-cat-sheet-btn {
+  opacity: 1;
+}
+
+.bcu-cat-sheet-btn:hover {
+  background: rgba(198, 168, 106, 0.3);
+}
+
+/* ---------- Bloc d'actions génériques groupées ----------
+   Plutôt qu'un bouton unique ouvrant un menu déroulant : N mini-icônes empilées
+   verticalement, occupant ensemble la même largeur/hauteur qu'un bouton normal. */
+.bcu-group-block {
+  display: flex;
+  flex-direction: column;
+  width: 42px;
+  height: 40px;
+  gap: 1px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(198, 168, 106, 0.35);
+}
+
+.bcu-group-mini {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: none;
+  border-top: 1px solid rgba(198, 168, 106, 0.2);
+  cursor: pointer;
+  color: var(--better-accent, #f0d9a3);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.bcu-group-mini:first-child {
+  border-top: none;
+}
+
+.bcu-group-mini i {
+  font-size: 9px;
+}
+
+.bcu-group-mini:hover {
+  background: rgba(198, 168, 106, 0.25);
+}
+
+.bcu-group-mini.bcu-has-item {
+  color: #59c97a;
+}
+
+/* ---------- Popover de sélection (catégories à plusieurs options) ---------- */
+.bcu-popover {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 190px;
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 5px;
+  background: rgba(10, 14, 11, 0.98);
+  border: 1px solid rgba(198, 168, 106, 0.55);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+  z-index: 210;
+}
+
+.bcu-popover-summary {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--better-accent, #f0d9a3);
+  text-align: center;
+  padding: 3px 4px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(198, 168, 106, 0.3);
+}
+
+.bcu-popover-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.bcu-popover-item:hover {
+  background: rgba(198, 168, 106, 0.2);
+}
+
+.bcu-popover-icon {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(198, 168, 106, 0.4);
+}
+
+.bcu-popover-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f2ede0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bcu-popover-level {
+  flex: 0 0 auto;
+  font-size: 9px;
+  font-weight: 700;
+  color: #b58aff;
+  text-transform: uppercase;
+}
+
+.bcu-popover-uses {
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--better-accent, #f0d9a3);
+}
+
+.bcu-popover-sheet {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border: 1px solid rgba(198, 168, 106, 0.4);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--better-accent, #f0d9a3);
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.bcu-popover-item:hover .bcu-popover-sheet {
+  opacity: 1;
+}
+
+.bcu-popover-sheet:hover {
+  background: rgba(198, 168, 106, 0.3);
+}
+
+/* ---------- Bouton "Terminer le tour" ----------
+   Même gabarit que .bcu-cat-btn (taille normale), juste une couleur distincte. */
+.bcu-cat-btn.bcu-end-turn {
+  border-color: rgba(89, 201, 122, 0.55);
+}
+
+.bcu-cat-btn.bcu-end-turn i {
+  color: #59c97a;
+}
+
+.bcu-cat-btn.bcu-end-turn:hover:not(:disabled) {
+  background: rgba(89, 201, 122, 0.2);
+  border-color: rgba(89, 201, 122, 0.8);
+}
+
+.bcu-cat-btn.bcu-end-turn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

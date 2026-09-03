@@ -1,0 +1,68 @@
+/* ================================================
+   Better UI — épuration de l'interface Foundry
+   Palette assortie aux autres modules (vert sombre / or)
+   ================================================ */
+
+/* ---------- Masquages ---------- */
+body.bui-hide-logo #logo {
+  display: none !important;
+}
+
+body.bui-hide-nav #navigation {
+  display: none !important;
+}
+
+body.bui-hide-hotbar #hotbar {
+  display: none !important;
+}
+
+body.bui-hide-controls #controls {
+  display: none !important;
+}
+
+/* ---------- Icônes de la barre d'outils compactes ---------- */
+body.bui-compact-controls #controls li {
+  width: 28px !important;
+  height: 28px !important;
+  line-height: 28px !important;
+  font-size: 13px !important;
+}
+
+body.bui-compact-controls #controls i {
+  font-size: 13px !important;
+}
+
+/*
+ * Recentre verticalement la barre d'outils de scène dans la hauteur de l'écran,
+ * quelle que soit sa hauteur réelle (variable selon le nombre de groupes visibles
+ * après filtrage) — évite qu'elle paraisse décalée vers le haut ou le bas une fois
+ * certains groupes masqués ou les icônes réduites.
+ */
+#controls {
+  position: fixed !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+}
+
+/* ---------- Boutons flottants ----------
+   Style mutualisé via la classe .bs-toggle-btn (styles/theme.css) — le
+   positionnement (bas-gauche en rangée, ou centré pour la hotbar) est géré
+   automatiquement par le registre partagé (scripts/_core.js), plus besoin de
+   "left" codés en dur ici. */
+
+/* ---------- Menu de configuration des outils affichés par défaut ---------- */
+.bui-control-groups-form .bui-group-list {
+  max-height: 320px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
+
+.bui-control-groups-form .bui-group-row {
+  margin: 2px 0;
+}
+
+.bui-control-groups-form .bui-group-empty {
+  font-style: italic;
+  opacity: 0.8;
+}

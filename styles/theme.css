@@ -1,0 +1,49 @@
+/* ================================================
+   Better Suite — thème central
+   Variables de couleur partagées par tous les modules, et style unique du bouton
+   flottant (auparavant dupliqué à l'identique dans 3 fichiers différents).
+   ================================================ */
+
+:root {
+  --better-accent: #f0d9a3;
+  --better-accent-dim: #c6a86a;
+  --better-bg-top: #182620;
+  --better-bg-bottom: #0f1411;
+}
+
+.bs-toggle-btn {
+  position: fixed;
+  bottom: 8px;
+  z-index: 200;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 168, 106, 0.6);
+  background: linear-gradient(180deg, var(--better-bg-top, #182620), var(--better-bg-bottom, #0f1411));
+  color: var(--better-accent, #f0d9a3);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+  transition: transform 0.15s ease, color 0.15s ease, border-color 0.15s ease, left 0.15s ease;
+}
+
+.bs-toggle-btn:hover {
+  transform: scale(1.08);
+}
+
+.bs-toggle-btn.active {
+  color: #59c97a;
+  border-color: rgba(89, 201, 122, 0.6);
+}
+
+.bs-toggle-btn-centered {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bs-toggle-btn-centered:hover {
+  transform: translateX(-50%) scale(1.08);
+}

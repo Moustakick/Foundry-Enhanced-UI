@@ -1,0 +1,319 @@
+/* ================================================
+   Better Chat — reskin de l'onglet chat de Foundry
+   Palette assortie à Better Party List (vert sombre / or)
+   ================================================ */
+
+/*
+ * Transparence réelle : le fond opaque, la bordure et l'ombre portée viennent en
+ * fait de #sidebar lui-même (et de la classe générique .app dont il hérite), pas
+ * seulement du contenu de l'onglet chat. On ne touche JAMAIS .app directement
+ * (ça affecterait toutes les fenêtres de Foundry : fiches, dialogues, notre propre
+ * panneau player list...). On cible #sidebar par son ID, uniquement, et seulement
+ * quand l'onglet chat est actif (classe posée/retirée en JS via le hook
+ * "changeSidebarTab") — pour ne pas rendre transparents les autres onglets
+ * (Acteurs, Combat, Journal...) qui partagent le même conteneur #sidebar.
+ */
+body.bc-chat-active #sidebar {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ---------- Fond thématique propre à l'onglet chat ---------- */
+#sidebar #chat.tab,
+#sidebar .tab[data-tab="chat"],
+#sidebar div#chat,
+#chat.sidebar-tab {
+  background: linear-gradient(
+    180deg,
+    rgba(24, 38, 30, var(--bc-bg-alpha, 0)),
+    rgba(15, 20, 17, var(--bc-bg-alpha, 0))
+  ) !important;
+  backdrop-filter: blur(1px);
+
+  /*
+   * Le cœur de Foundry (et les cartes dnd5e2) utilisent des variables CSS
+   * --color-text-dark-* pour le texte secondaire (sous-titres, texte "supplement"
+   * des cartes de sort, etc.), pensées pour un fond CLAIR (parchemin) — donc
+   * naturellement sombres. Sur notre fond désormais transparent/sombre, elles
+   * deviennent quasi invisibles. On les redéfinit ici : comme ce sont des
+   * variables CSS héritées, ça corrige d'un coup TOUT ce qui s'appuie dessus
+   * dans l'onglet chat (sous-titres d'expéditeur, texte des cartes de sort, et
+   * tout élément similaire qu'on n'aurait pas identifié individuellement).
+   */
+  --color-text-dark-1: #f5efe0;
+  --color-text-dark-2: #f0e6d0;
+  --color-text-dark-3: #e8dcc0;
+  --color-text-dark-4: #ddd0b0;
+  --color-text-dark-5: var(--better-accent, #f0d9a3);
+  --color-text-dark-6: #c9c2b3;
+}
+
+/* Neutralise un éventuel espacement (gap) entre les enfants directs de l'onglet
+   chat (#chat-log, #chat-controls, #chat-form) posé par le cœur de Foundry. */
+body.bc-compact-input #sidebar #chat.tab,
+body.bc-compact-input #chat.sidebar-tab {
+  gap: 0 !important;
+}
+
+#chat-log {
+  background: transparent !important;
+  padding: 6px 8px;
+}
+
+/* ---------- Cartes de messages ----------
+   Pas de fond teinté fort : transparence + flou ("glassy"), avec juste une bordure
+   droite colorée pour distinguer le type de jet (doré = public, violet = privé/
+   perso, rouge = aveugle). #chat-log > li cible TOUS les messages, quelle que
+   soit leur classe exacte. */
+#chat-log > li {
+  background: rgba(10, 14, 11, 0.22) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: none !important;
+  border-right: 3px solid var(--better-accent-dim, #c6a86a) !important;
+  border-radius: 4px !important;
+  margin: 0 0 8px 0 !important;
+  padding: 6px 10px !important;
+  color: var(--better-accent, #f0d9a3) !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+}
+
+/*
+ * Certains systèmes de jeu habillent chaque message d'un fond opaque (texture
+ * parchemin) porté par un élément interne, qui recouvre alors entièrement l'effet
+ * de flou ci-dessus.
+ * - Sur les enfants DIRECTS du message : on neutralise fond ET couleur de fond
+ *   (le plus sûr, cible probable du fond principal de la carte).
+ * - Sur TOUS les descendants plus profonds : on ne neutralise QUE l'image de fond
+ *   (la texture elle-même), en laissant intacte une éventuelle couleur de fond
+ *   intentionnelle plus imbriquée (ex. boîte de résultat de jet colorée).
+ */
+#chat-log > li > * {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+#chat-log > li * {
+  background-image: none !important;
+}
+
+/*
+ * Les cartes de sort/objet dnd5e2 (.dnd5e2.chat-card) gardent un fond clair à
+ * plusieurs niveaux d'imbrication (pensé pour le thème clair natif de Foundry),
+ * que la neutralisation ci-dessus (trop superficielle) ne suffit pas à atteindre
+ * partout — d'où du texte blanc sur fond resté blanc par endroits. On assombrit
+ * ici TOUT le contenu de ces cartes spécifiquement, à tous les niveaux, puis on
+ * réaffirme juste après les couleurs d'état significatives (réussite/échec/
+ * critique) que cet assombrissement aurait sinon effacées.
+ */
+#chat-log > li .dnd5e2,
+#chat-log > li .dnd5e2 *,
+#chat-log > li .chat-card,
+#chat-log > li .chat-card * {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+#chat-log > li .dnd5e2.chat-card,
+#chat-log > li .chat-card {
+  background: rgba(10, 14, 11, 0.55) !important;
+  border-radius: 6px;
+}
+
+/*
+ * Texte blanc par défaut pour tout ce qui est à l'intérieur de ces cartes (les
+ * boutons "Attack"/"Damage"/"Apply" etc. gardent sinon leur texte sombre d'origine,
+ * pensé pour le thème clair natif de Foundry — illisible sur le fond qu'on vient
+ * d'assombrir). Spécificité volontairement basse (le sélecteur "*" ne compte pour
+ * rien) : tout ce qui a déjà une couleur spécifique ailleurs dans cette feuille de
+ * style (titres, timestamps, badges réussite/échec/critique...) reste prioritaire.
+ */
+#chat-log > li .dnd5e2,
+#chat-log > li .dnd5e2 *,
+#chat-log > li .chat-card,
+#chat-log > li .chat-card * {
+  color: #ffffff !important;
+}
+
+#chat-log > li .dice-total.success,
+#chat-log > li .rsr-base-die.success,
+#chat-log > li .rsr-base-damage.success {
+  background-color: rgba(63, 174, 92, 0.35) !important;
+}
+
+#chat-log > li .dice-total.failure,
+#chat-log > li .rsr-base-die.failure,
+#chat-log > li .rsr-base-damage.failure {
+  background-color: rgba(232, 97, 92, 0.35) !important;
+}
+
+#chat-log > li .dice-total.critical {
+  background-color: rgba(240, 217, 163, 0.35) !important;
+}
+
+/*
+ * Un coin décoratif (ex. effet "coin corné") est très souvent posé via un
+ * pseudo-élément ::before/::after plutôt qu'un vrai élément du DOM — invisible
+ * pour un sélecteur "*" classique, qui ne cible que les vrais éléments.
+ * On ne touche qu'au fond (pas à "content"), pour ne pas supprimer une icône
+ * légitime qui utiliserait aussi un pseudo-élément pour s'afficher.
+ */
+#chat-log > li::before,
+#chat-log > li::after,
+#chat-log > li *::before,
+#chat-log > li *::after {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* Distinction des types de jets par la couleur de la bordure droite */
+#chat-log > li.whisper {
+  border-right-color: #b58aff !important;
+}
+
+#chat-log > li.blind {
+  border-right-color: #e8615c !important;
+  opacity: 0.85;
+}
+
+/* Contraste fort du nom d'expéditeur / en-tête de message : filet de sécurité large
+   (h1-h4 + classes génériques Foundry, dont ".title" utilisé par les cartes de
+   sort/objet dnd5e2), car le nom peut être rendu par des balises différentes selon
+   le système de jeu. Blanc pour un contraste maximal sur le fond flouté. */
+#chat-log > li h1,
+#chat-log > li h2,
+#chat-log > li h3,
+#chat-log > li h4,
+#chat-log > li .message-sender,
+#chat-log > li .title,
+#chat-log > li header {
+  color: #ffffff !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Ombre portée très légère sur tout le texte des messages, sans forcer une autre
+   couleur (pour ne pas casser un code couleur existant sur les jets/dégâts) : la
+   couleur de base var(--better-accent, #f0d9a3) est héritée du <li> ci-dessus. */
+#chat-log > li,
+#chat-log > li * {
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+#chat-log .message-timestamp {
+  color: #d9d4c8 !important;
+  font-size: 10px;
+}
+
+#chat-log .dice-roll .dice-result .dice-total {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(198, 168, 106, 0.4);
+  color: #f5e2ab !important;
+}
+
+/* ---------- Saisie de texte compacte : une seule ligne, pleine largeur ----------
+   Spécificité renforcée (#sidebar #chat-message) pour l'emporter sur une règle du
+   système de jeu de même priorité (!important). */
+body.bc-compact-input #chat-message,
+body.bc-compact-input #chat-form textarea,
+body.bc-compact-input #sidebar #chat-message {
+  display: block !important;
+  width: auto !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  max-height: 26px !important;
+  /* flex-grow: 1 pour remplir la largeur du formulaire (#chat-form est en flex-row) ;
+     flex-basis: 0 pour ne pas laisser le contenu dicter une largeur minimale. La
+     hauteur, elle, est fixée séparément ci-dessus via height/min-height/max-height
+     — flex-basis n'a aucun effet sur la hauteur dans un flex-row. */
+  flex: 1 1 0 !important;
+  overflow-y: auto !important;
+  resize: none !important;
+  padding: 2px 8px !important;
+  margin: 0 !important;
+  font-size: 12px !important;
+  line-height: 20px !important;
+  border-radius: 6px !important;
+  background: rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(198, 168, 106, 0.35) !important;
+  color: #ffffff !important;
+}
+
+body.bc-compact-input #chat-message:focus,
+body.bc-compact-input #chat-form textarea:focus {
+  outline: none;
+  border-color: var(--better-accent-dim, #c6a86a) !important;
+  box-shadow: 0 0 4px rgba(198, 168, 106, 0.4);
+}
+
+body.bc-compact-input #chat-form {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 6px !important;
+  margin: 0 !important;
+  height: 100px !important;
+  flex: 0 0 40px !important;
+}
+
+/*
+ * #chat-controls (le conteneur des icônes de mode de jet + boutons exporter/vider)
+ * est un FRÈRE de #chat-form, pas son parent — confirmé par le DOM fourni. Il a très
+ * probablement son propre padding/margin par défaut dans le cœur de Foundry (prévu
+ * à l'origine pour un input plus haut), qu'on n'avait jamais neutralisé jusqu'ici :
+ * c'est la cause la plus probable de l'espace persistant au-dessus du textarea.
+ */
+body.bc-compact-input #chat-controls {
+  padding: 4px 6px !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  flex: 0 0 auto !important;
+  gap: 4px !important;
+}
+
+/* ---------- Icônes de mode de jet (remplace le <select>) ---------- */
+body.bc-icon-rollmode #chat-form select[name="rollMode"],
+body.bc-icon-rollmode select[name="rollMode"] {
+  display: none !important;
+}
+
+.bc-rollmode-row {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(198, 168, 106, 0.3);
+  border-radius: 20px;
+  flex: 0 0 auto;
+  /* Pousse tout ce qui suit (ex. boutons sauvegarder/supprimer d'un système de jeu)
+     à l'extrémité droite de la barre, SI son parent direct est bien en flex-row.
+     Sans effet si ce n'est pas le cas — à confirmer selon ta structure exacte. */
+  margin-right: auto;
+}
+
+.bc-rollmode-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #c9c2b3;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-shadow: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.bc-rollmode-btn:hover {
+  background: rgba(198, 168, 106, 0.2);
+  color: #f2ede0;
+}
+
+.bc-rollmode-btn.active {
+  background: rgba(198, 168, 106, 0.35);
+  color: var(--better-accent, #f0d9a3);
+}

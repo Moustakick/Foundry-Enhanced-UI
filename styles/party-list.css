@@ -1,0 +1,1249 @@
+/* Masque la liste des joueurs native de Foundry */
+body.bpl-hide-default #players {
+  display: none !important;
+}
+
+/* ---------- Fenêtre principale ---------- */
+#better-party-list-app.bpl-app {
+  background: none;
+  box-shadow: none;
+}
+
+#better-party-list-app.bpl-app .window-header {
+  background: linear-gradient(180deg, rgba(24, 38, 30, var(--bpl-bg-alpha, 0.95)), rgba(18, 28, 22, var(--bpl-bg-alpha, 0.95)));
+  border-bottom: 1px solid rgba(198, 168, 106, 0.5);
+  border-radius: 8px 8px 0 0;
+  padding: 4px 8px;
+  height: auto;
+  min-height: 32px;
+  flex: 0 0 auto;
+}
+
+#better-party-list-app.bpl-app .window-title {
+  color: var(--better-accent, #f0d9a3);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-family: var(--font-h2, "Signika", sans-serif);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
+#better-party-list-app.bpl-app .window-header .header-button {
+  color: var(--better-accent, #f0d9a3);
+  opacity: 0.9;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
+}
+
+#better-party-list-app.bpl-app .window-header .header-button:hover {
+  opacity: 1;
+  text-shadow: 0 0 6px var(--better-accent-dim, #c6a86a);
+}
+
+#better-party-list-app.bpl-app .window-content {
+  background: rgba(15, 20, 17, var(--bpl-bg-alpha, 0.88));
+  border: 1px solid rgba(198, 168, 106, 0.35);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 0;
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Fenêtre réduite : ne garder que l'en-tête arrondi */
+#better-party-list-app.bpl-app.minimized .window-header {
+  border-radius: 8px;
+}
+
+/* ---------- Mode ancré (plein écran, collé à gauche) ---------- */
+#better-party-list-app.bpl-app.bpl-docked {
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+#better-party-list-app.bpl-app.bpl-docked .window-header {
+  margin: 0 !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(198, 168, 106, 0.5) !important;
+  border-radius: 0 !important;
+  cursor: default;
+}
+
+#better-party-list-app.bpl-app.bpl-docked .window-content {
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+/*
+ * Réserve un espace vide en bas du contenu, en mode ancré uniquement : c'est là
+ * que vivent nos boutons flottants (réouverture, etc., z-index volontairement
+ * élevé pour ne pas être floutés sous le panneau). Sans cette marge, un élément
+ * du panneau qui se trouve tout en bas (ex. le bouton "Terminer mon tour" du
+ * carrousel de combat) se retrouve caché — et donc inutilisable — sous ces
+ * boutons. On préfère ne jamais rien afficher dans cette zone plutôt que de
+ * jouer au jeu du z-index dans l'autre sens (ce qui referait flouter les
+ * boutons flottants sous le panneau).
+ */
+#better-party-list-app.bpl-app.bpl-docked .bpl-panels .tab.active {
+  padding-bottom: 52px;
+}
+
+/*
+ * Clic-au-travers en mode ancré : le fond du panneau ne capte plus les clics
+ * (on peut interagir avec la scène/le canvas en dessous), mais tous les éléments
+ * réellement interactifs restent cliquables normalement.
+ */
+#better-party-list-app.bpl-app.bpl-docked {
+  pointer-events: none;
+}
+
+#better-party-list-app.bpl-app.bpl-docked .window-header,
+#better-party-list-app.bpl-app.bpl-docked .bpl-tabs,
+#better-party-list-app.bpl-app.bpl-docked .bpl-tab-party,
+#better-party-list-app.bpl-app.bpl-docked .bpl-tab-actions,
+#better-party-list-app.bpl-app.bpl-docked .bpl-tab-notes,
+#better-party-list-app.bpl-app.bpl-docked .bpl-member,
+#better-party-list-app.bpl-app.bpl-docked .bpl-npc-add,
+#better-party-list-app.bpl-app.bpl-docked .bpl-share-dropzone,
+#better-party-list-app.bpl-app.bpl-docked .bpl-share-thumb,
+#better-party-list-app.bpl-app.bpl-docked .bpl-notes-input,
+#better-party-list-app.bpl-app.bpl-docked .bpl-dock-resize-handle,
+#better-party-list-app.bpl-app.bpl-docked .bpl-combat-header,
+#better-party-list-app.bpl-app.bpl-docked .bpl-combat-controls,
+#better-party-list-app.bpl-app.bpl-docked .bpl-combat-actions {
+  pointer-events: auto;
+}
+
+/* Poignée de redimensionnement en largeur (mode ancré uniquement) */
+.bpl-dock-resize-handle {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 5;
+}
+
+.bpl-dock-resize-handle:hover,
+.bpl-dock-resize-handle:active {
+  background: rgba(198, 168, 106, 0.35);
+}
+
+#better-party-list-app.bpl-app.bpl-docked .bpl-dock-resize-handle {
+  display: block;
+}
+
+/* Pas de redimensionnement ni de déplacement possible en mode ancré */
+#better-party-list-app.bpl-app.bpl-docked .window-resizable-handle {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/*
+ * Décale la barre d'outils de scène (#ui-left, contient aussi le logo) ET le
+ * navigateur de scènes (#navigation) à droite du panneau ancré, pour éviter tout
+ * chevauchement avec lui (le navigateur de scènes est normalement centré sur toute
+ * la largeur de l'écran, sans tenir compte de notre panneau). On utilise une classe
+ * sur <body> + !important avec une spécificité supérieure à celle du cœur de
+ * Foundry, car ces éléments ne sont pas forcément positionnés individuellement
+ * (agir directement en JS sur leur style.left n'aurait alors aucun effet).
+ */
+#ui-left,
+#navigation {
+  transition: margin-left 0.2s ease;
+}
+
+body.bpl-controls-shifted #ui-left,
+body.bpl-controls-shifted #navigation {
+  margin-left: var(--bpl-dock-offset, 280px) !important;
+}
+
+
+/* Poignée de redimensionnement, plus visible sur fond sombre */
+#better-party-list-app.bpl-app .window-resizable-handle {
+  color: var(--better-accent-dim, #c6a86a);
+  opacity: 0.6;
+}
+#better-party-list-app.bpl-app .window-resizable-handle:hover {
+  opacity: 1;
+}
+
+/* ---------- Onglets ---------- */
+#better-party-list-app.bpl-app .bpl-tabs {
+  display: flex;
+  flex: 0 0 auto;
+  border-bottom: 1px solid rgba(198, 168, 106, 0.35);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+#better-party-list-app.bpl-app .bpl-tabs .item {
+  flex: 1;
+  text-align: center;
+  padding: 5px 4px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #c9c2b3;
+  border-bottom: 2px solid transparent;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+#better-party-list-app.bpl-app .bpl-tabs .item i {
+  margin-right: 4px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
+
+#better-party-list-app.bpl-app .bpl-tabs .item:hover {
+  color: #f5efe0;
+}
+
+#better-party-list-app.bpl-app .bpl-tabs .item.active {
+  color: var(--better-accent, #f0d9a3);
+  border-bottom-color: var(--better-accent-dim, #c6a86a);
+}
+
+#better-party-list-app.bpl-app .bpl-panels {
+  flex: 1 1 auto;
+  overflow: hidden;
+  display: flex;
+}
+
+#better-party-list-app.bpl-app .tab {
+  flex: 1 1 auto;
+  display: none;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+#better-party-list-app.bpl-app .tab.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Retour visuel pendant le glisser-déposer d'un acteur depuis l'onglet Acteurs */
+#better-party-list-app.bpl-app .bpl-tab-party.bpl-drag-over {
+  outline: 2px dashed var(--better-accent, #f0d9a3);
+  outline-offset: -4px;
+  background: rgba(198, 168, 106, 0.1);
+}
+
+/* ---------- Liste des membres ---------- */
+.bpl-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bpl-member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(22, 34, 27, 0.9), rgba(22, 34, 27, 0.65));
+  border: 1px solid rgba(198, 168, 106, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+  flex: 0 0 auto;
+}
+
+.bpl-member:hover {
+  background: linear-gradient(90deg, rgba(58, 94, 74, 0.9), rgba(58, 94, 74, 0.55));
+  border-color: rgba(198, 168, 106, 0.6);
+  transform: translateX(2px);
+}
+
+.bpl-member.bpl-offline {
+  opacity: 0.6;
+}
+
+.bpl-avatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid var(--bpl-user-color, var(--better-accent-dim, #c6a86a));
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+}
+
+.bpl-status-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(15, 20, 17, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bpl-status-dot.online {
+  background: #3fae5c;
+}
+
+.bpl-status-dot.online::after {
+  content: "\2713";
+  color: #fff;
+  font-size: 7px;
+  line-height: 1;
+}
+
+.bpl-status-dot.offline {
+  background: #6b6b6b;
+}
+
+.bpl-names {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 1px;
+}
+
+.bpl-name {
+  color: #f2ede0;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.bpl-player-name {
+  color: #c9c2b3;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-health-bar {
+  width: 100%;
+  height: 5px;
+  margin-top: 2px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.bpl-health-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.bpl-empty {
+  color: #c9c2b3;
+  font-size: 12px;
+  text-align: center;
+  margin: 4px 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* ---------- Carrousel d'initiative de combat ---------- */
+.bpl-combat-view {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.bpl-combat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(198, 168, 106, 0.4);
+  border-radius: 6px;
+  flex: 0 0 auto;
+}
+
+.bpl-combat-round {
+  color: var(--better-accent, #f0d9a3);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-combat-round i {
+  margin-right: 4px;
+}
+
+.bpl-combat-roll-missing {
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(198, 168, 106, 0.5);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--better-accent, #f0d9a3);
+  cursor: pointer;
+}
+
+.bpl-combat-roll-missing:hover {
+  background: rgba(198, 168, 106, 0.2);
+}
+
+.bpl-combat-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 60px;
+}
+
+.bpl-combatant {
+  position: relative;
+}
+
+.bpl-combatant .bpl-avatar {
+  position: relative;
+}
+
+.bpl-current-turn {
+  background: linear-gradient(90deg, rgba(198, 168, 106, 0.35), rgba(198, 168, 106, 0.12)) !important;
+  border-color: var(--better-accent, #f0d9a3) !important;
+  box-shadow: 0 0 8px rgba(240, 217, 163, 0.5);
+}
+
+.bpl-current-turn .bpl-avatar {
+  border-color: var(--better-accent, #f0d9a3);
+  box-shadow: 0 0 6px rgba(240, 217, 163, 0.7);
+}
+
+.bpl-current-turn-badge {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--better-accent, #f0d9a3);
+  color: #15201a;
+  font-size: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Indicateur de disposition des PNJ (neutre/amical/secret/hostile) */
+.bpl-disposition {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid rgba(15, 20, 17, 0.9);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+.bpl-disposition-hostile {
+  background: #e8615c;
+}
+
+.bpl-disposition-neutral {
+  background: #d9c26a;
+}
+
+.bpl-disposition-friendly {
+  background: #59c97a;
+}
+
+.bpl-disposition-secret {
+  background: #6b6b6b;
+}
+
+.bpl-defeated {
+  opacity: 0.55;
+}
+
+.bpl-defeated .bpl-name {
+  text-decoration: line-through;
+}
+
+.bpl-defeated-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 50%;
+  color: #e8615c;
+  font-size: 14px;
+}
+
+.bpl-combat-initiative {
+  flex: 0 0 auto;
+  min-width: 24px;
+  text-align: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(198, 168, 106, 0.35);
+  color: var(--better-accent, #f0d9a3);
+  font-size: 12px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-combat-controls {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.bpl-combat-controls button {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid rgba(198, 168, 106, 0.6);
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(198, 168, 106, 0.25), rgba(198, 168, 106, 0.08));
+  color: var(--better-accent, #f0d9a3);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-combat-controls button:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(198, 168, 106, 0.4), rgba(198, 168, 106, 0.15));
+}
+
+.bpl-combat-controls .bpl-combat-prev {
+  flex: 0 0 auto;
+  width: 34px;
+}
+
+.bpl-combat-controls .bpl-combat-end {
+  flex: 0 0 auto;
+  width: 34px;
+  border-color: rgba(232, 97, 92, 0.6);
+  background: linear-gradient(180deg, rgba(232, 97, 92, 0.25), rgba(232, 97, 92, 0.08));
+  color: #e8615c;
+}
+
+.bpl-combat-controls .bpl-combat-end:hover {
+  background: linear-gradient(180deg, rgba(232, 97, 92, 0.4), rgba(232, 97, 92, 0.15)) !important;
+}
+
+.bpl-combat-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
+/* ---------- Section PNJ en vedette (sous la liste des joueurs) ---------- */
+.bpl-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 6px;
+  color: #c9c2b3;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-section-divider::before,
+.bpl-section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(198, 168, 106, 0.4);
+}
+
+.bpl-npc .bpl-avatar {
+  border-color: rgba(198, 168, 106, 0.6);
+}
+
+.bpl-npc-missing {
+  opacity: 0.45;
+  font-style: italic;
+}
+
+.bpl-npc-remove {
+  margin-left: auto;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(120, 40, 40, 0.6);
+  color: #e8e2d0;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.bpl-npc:hover .bpl-npc-remove {
+  opacity: 1;
+}
+
+.bpl-npc-remove:hover {
+  background: rgba(170, 50, 50, 0.9);
+}
+
+/* Bouton d'assignation/changement de personnage (MJ uniquement, au survol) */
+.bpl-member-assign {
+  margin-left: auto;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(198, 168, 106, 0.35);
+  color: #15201a;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.bpl-member:hover .bpl-member-assign {
+  opacity: 1;
+}
+
+.bpl-member-assign:hover {
+  background: rgba(198, 168, 106, 0.7);
+}
+
+/* Ligne d'un joueur sans personnage assigné (visible du MJ uniquement) */
+.bpl-member.bpl-no-character {
+  opacity: 0.6;
+}
+
+.bpl-member.bpl-no-character .bpl-name {
+  font-style: italic;
+}
+
+.bpl-npc-add {
+  margin-top: 8px;
+  flex: 0 0 auto;
+}
+
+.bpl-npc-add-toggle {
+  width: 100%;
+  padding: 5px 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px dashed rgba(198, 168, 106, 0.5);
+  border-radius: 6px;
+  color: var(--better-accent, #f0d9a3);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-npc-add-toggle:hover {
+  background: rgba(198, 168, 106, 0.18);
+}
+
+.bpl-npc-add-panel {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(198, 168, 106, 0.3);
+  border-radius: 6px;
+}
+
+.bpl-npc-add-panel.bpl-open {
+  display: flex;
+}
+
+.bpl-npc-add-row,
+.bpl-npc-quick-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bpl-npc-add-row select,
+.bpl-npc-quick-row input[type="text"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(198, 168, 106, 0.4);
+  border-radius: 4px;
+  color: #f2ede0;
+  font-size: 12px;
+  padding: 3px 6px;
+}
+
+.bpl-npc-add-row button,
+.bpl-npc-quick-row button {
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border: 1px solid rgba(198, 168, 106, 0.6);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--better-accent, #f0d9a3);
+  font-size: 11px;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-npc-add-row button:hover,
+.bpl-npc-quick-row button:hover {
+  background: rgba(198, 168, 106, 0.2);
+}
+
+.bpl-npc-quick-img {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid rgba(198, 168, 106, 0.5);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bpl-npc-quick-img i {
+  font-size: 9px;
+  color: #fff;
+  opacity: 0;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+  transition: opacity 0.15s ease;
+}
+
+.bpl-npc-quick-img:hover {
+  border-color: var(--better-accent-dim, #c6a86a);
+}
+
+.bpl-npc-quick-img:hover i {
+  opacity: 1;
+}
+
+/* ---------- Onglet Partage ---------- */
+.bpl-share-dropzone {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 10px;
+  margin-bottom: 10px;
+  border: 2px dashed rgba(198, 168, 106, 0.5);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #c9c2b3;
+  text-align: center;
+  font-size: 12px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.bpl-share-dropzone i {
+  font-size: 20px;
+  color: var(--better-accent, #f0d9a3);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
+}
+
+.bpl-share-dropzone.bpl-drag-hover {
+  background: rgba(198, 168, 106, 0.2);
+  border-color: var(--better-accent-dim, #c6a86a);
+}
+
+.bpl-share-browse {
+  margin-top: 4px;
+  padding: 3px 10px;
+  border: 1px solid rgba(198, 168, 106, 0.6);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--better-accent, #f0d9a3);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.bpl-share-browse:hover {
+  background: rgba(198, 168, 106, 0.2);
+}
+
+.bpl-share-gallery {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 6px;
+  align-content: start;
+  overflow-y: auto;
+}
+
+.bpl-share-thumb {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(198, 168, 106, 0.35);
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.bpl-share-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.15s ease;
+}
+
+.bpl-share-thumb:hover img {
+  transform: scale(1.08);
+}
+
+.bpl-share-resend {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(15, 20, 17, 0.95);
+  color: var(--better-accent, #f0d9a3);
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.bpl-share-thumb:hover .bpl-share-resend {
+  opacity: 1;
+}
+
+.bpl-share-resend:hover {
+  background: rgba(198, 168, 106, 0.9);
+  color: #15201a;
+}
+
+/* ---------- Onglet Actions ---------- */
+.bpl-actions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  margin-bottom: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(198, 168, 106, 0.4);
+  border-radius: 6px;
+  flex: 0 0 auto;
+}
+
+.bpl-actions-title {
+  color: var(--better-accent, #f0d9a3);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-actions-title i {
+  margin-right: 4px;
+}
+
+.bpl-actions-reset {
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(198, 168, 106, 0.5);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--better-accent, #f0d9a3);
+  cursor: pointer;
+}
+
+.bpl-actions-reset:hover {
+  background: rgba(198, 168, 106, 0.2);
+}
+
+.bpl-actions-hint {
+  color: #a9a297;
+  font-size: 10px;
+  font-style: italic;
+  text-align: center;
+  margin: 8px 0 0;
+}
+
+.bpl-action-category {
+  margin-bottom: 4px;
+}
+
+.bpl-action-category-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px;
+  cursor: pointer;
+  color: #c9c2b3;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-action-category-header:hover {
+  color: var(--better-accent, #f0d9a3);
+}
+
+.bpl-action-category-header i.fa-chevron-down,
+.bpl-action-category-header i.fa-chevron-right {
+  font-size: 9px;
+  width: 10px;
+}
+
+.bpl-action-category-count {
+  margin-left: auto;
+  opacity: 0.7;
+}
+
+.bpl-action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 2px 0 8px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bpl-action-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, rgba(22, 34, 27, 0.8), rgba(22, 34, 27, 0.45));
+  border: 1px solid rgba(198, 168, 106, 0.25);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.bpl-action-item:hover {
+  background: linear-gradient(90deg, rgba(58, 94, 74, 0.85), rgba(58, 94, 74, 0.45));
+  border-color: rgba(198, 168, 106, 0.5);
+}
+
+.bpl-action-icon {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(198, 168, 106, 0.4);
+}
+
+.bpl-action-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f2ede0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-action-type {
+  flex: 0 0 auto;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.bpl-action-type-action {
+  background: rgba(89, 201, 122, 0.3);
+  color: #59c97a;
+}
+
+.bpl-action-type-bonus {
+  background: rgba(240, 217, 163, 0.3);
+  color: var(--better-accent, #f0d9a3);
+}
+
+.bpl-action-type-reaction {
+  background: rgba(181, 138, 255, 0.3);
+  color: #b58aff;
+}
+
+.bpl-action-type-other {
+  background: rgba(169, 162, 151, 0.3);
+  color: #c9c2b3;
+}
+
+.bpl-action-uses {
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--better-accent, #f0d9a3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-action-remove {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border: none;
+  border-radius: 3px;
+  background: rgba(120, 40, 40, 0.6);
+  color: #e8e2d0;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.bpl-action-item:hover .bpl-action-remove {
+  opacity: 1;
+}
+
+.bpl-action-remove:hover {
+  background: rgba(170, 50, 50, 0.9);
+}
+
+/* Retour visuel pendant le glisser-déposer d'un objet depuis la fiche du personnage */
+#better-party-list-app.bpl-app .bpl-tab-actions.bpl-drag-over {
+  outline: 2px dashed var(--better-accent, #f0d9a3);
+  outline-offset: -4px;
+  background: rgba(198, 168, 106, 0.1);
+}
+
+/* Vue compacte affichée sous le carrousel de combat : prend environ un tiers de
+   la hauteur disponible, l'ordre d'initiative gardant le reste au-dessus. */
+.bpl-combat-actions {
+  flex: 0 0 33%;
+  min-height: 0;
+  overflow-y: auto;
+  border-top: 1px solid rgba(198, 168, 106, 0.3);
+  padding-top: 4px;
+  margin-top: 2px;
+}
+
+.bpl-action-list-compact {
+  margin: 0;
+}
+
+.bpl-action-list-compact .bpl-action-item {
+  padding: 2px 6px;
+}
+
+.bpl-action-list-compact .bpl-action-icon {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+}
+
+.bpl-action-list-compact .bpl-action-name {
+  font-size: 11px;
+}
+
+.bpl-action-combat-group {
+  margin-bottom: 6px;
+}
+
+.bpl-action-combat-group:last-child {
+  margin-bottom: 0;
+}
+
+.bpl-action-combat-group-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 4px;
+  margin-bottom: 2px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Réutilise la palette déjà définie pour les badges .bpl-action-type-* */
+.bpl-action-combat-group-label.bpl-action-type-action {
+  color: #59c97a;
+}
+
+.bpl-action-combat-group-label.bpl-action-type-bonus {
+  color: var(--better-accent, #f0d9a3);
+}
+
+.bpl-action-combat-group-label.bpl-action-type-reaction {
+  color: #b58aff;
+}
+
+.bpl-action-combat-group-label.bpl-action-type-other {
+  color: #c9c2b3;
+}
+
+/* ---------- Onglet Notes ----------
+   Répartition de l'espace disponible en flex-grow réel (ratio 3:1), plutôt que
+   des max-height fixes qui laissaient beaucoup de vide en dessous des deux blocs :
+   la prise de notes occupe la majorité de la hauteur, les journaux une petite
+   section en dessous. flex-basis à 0 pour une répartition proportionnelle propre,
+   min-height à 0 pour que le scroll interne fonctionne correctement en flexbox. */
+.bpl-notes-input {
+  flex: 3 1 0;
+  width: 100%;
+  min-height: 0;
+  resize: none;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(198, 168, 106, 0.35);
+  border-radius: 6px;
+  color: #f2ede0;
+  font-size: 13px;
+  font-family: var(--font-primary, sans-serif);
+  padding: 8px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.bpl-notes-input::placeholder {
+  color: #a9a297;
+}
+
+.bpl-notes-input:focus {
+  outline: none;
+  border-color: var(--better-accent-dim, #c6a86a);
+  box-shadow: 0 0 4px rgba(198, 168, 106, 0.4);
+}
+
+.bpl-journal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  padding: 4px 6px;
+  margin: 8px 0 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(198, 168, 106, 0.3);
+  border-radius: 6px;
+}
+
+.bpl-journal-header-title {
+  color: #c9c2b3;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.bpl-journal-header-title i {
+  margin-right: 4px;
+}
+
+.bpl-journal-add {
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(198, 168, 106, 0.5);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--better-accent, #f0d9a3);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.bpl-journal-add:hover {
+  background: rgba(198, 168, 106, 0.2);
+}
+
+.bpl-journal-list {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.bpl-journal-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(22, 34, 27, 0.75), rgba(22, 34, 27, 0.4));
+  border: 1px solid rgba(198, 168, 106, 0.25);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.bpl-journal-item:hover {
+  background: linear-gradient(90deg, rgba(58, 94, 74, 0.85), rgba(58, 94, 74, 0.45));
+  border-color: rgba(198, 168, 106, 0.5);
+  transform: translateX(2px);
+}
+
+.bpl-journal-item i {
+  color: var(--better-accent-dim, #c6a86a);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
+
+.bpl-journal-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f2ede0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* ---------- Bouton flottant de réouverture ----------
+   Style désormais mutualisé via la classe .bs-toggle-btn (styles/theme.css) —
+   ne conserver ici que d'éventuelles surcharges spécifiques, s'il y en a. */
+

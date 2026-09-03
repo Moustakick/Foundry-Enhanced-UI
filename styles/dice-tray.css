@@ -1,0 +1,142 @@
+.bdt-tray {
+  position: fixed;
+  left: 50%;
+  bottom: var(--bdt-bottom-offset, 46px);
+  transform: translateX(-50%);
+  /* Au-dessus des fenêtres Application de Foundry (z-index dynamique, souvent
+     bien supérieur à 60), pour ne jamais se retrouver flouté sous un panneau. */
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-primary, sans-serif);
+  transition: left 0.2s ease;
+}
+
+/* Repositionnement à droite de la barre de combat piloté en JS (scripts/dice-tray.js,
+   qui mesure la position réelle du panneau #bcu-panel) via un style inline sur
+   .left/.transform — pas de règle CSS supplémentaire nécessaire ici. */
+
+.bdt-tray.bdt-tray-hidden {
+  display: none;
+}
+
+/* ---------- Rangée de dés ---------- */
+.bdt-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  background: linear-gradient(180deg, rgba(24, 38, 30, 0.95), rgba(18, 28, 22, 0.95));
+  border: 1px solid rgba(198, 168, 106, 0.4);
+  border-radius: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: translateY(8px) scale(0.92);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.bdt-tray.bdt-open .bdt-row {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.bdt-die {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #a9a297;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.bdt-die:hover {
+  background: rgba(198, 168, 106, 0.18);
+  color: #e8e2d0;
+}
+
+.bdt-die.bdt-active {
+  color: var(--better-accent-dim, #c6a86a);
+}
+
+.bdt-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: #b5342f;
+  border: 1px solid rgba(15, 20, 17, 0.9);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- Bouton central ---------- */
+.bdt-bubble {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 168, 106, 0.5);
+  background: radial-gradient(circle at 30% 30%, #22301f, #10160f);
+  color: var(--better-accent-dim, #c6a86a);
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.1s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.bdt-bubble:hover {
+  transform: scale(1.06);
+}
+
+.bdt-bubble.bdt-cancel {
+  color: #e8615c;
+  border-color: rgba(232, 97, 92, 0.6);
+}
+
+.bdt-bubble.bdt-send {
+  color: #59c97a;
+  border-color: rgba(89, 201, 122, 0.6);
+}
+
+/* ---------- Texte d'indice ---------- */
+.bdt-hint {
+  min-height: 14px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #a9a297;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.bdt-tray.bdt-open .bdt-hint {
+  opacity: 1;
+}
+
+.bdt-hint.bdt-hint-cancel {
+  color: #e8615c;
+}

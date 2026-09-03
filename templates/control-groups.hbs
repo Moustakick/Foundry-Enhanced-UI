@@ -1,0 +1,25 @@
+<form class="bui-control-groups-form">
+  <p class="notes">{{localize "BUI.Settings.ControlGroupsMenu.Hint"}}</p>
+
+  {{#if groups.length}}
+  <div class="bui-group-list">
+    {{#each groups as |g|}}
+    <div class="form-group bui-group-row">
+      <label class="checkbox">
+        <input type="checkbox" name="{{g.name}}" {{#if g.checked}}checked{{/if}}>
+        {{g.title}}
+      </label>
+    </div>
+    {{/each}}
+  </div>
+  {{else}}
+  <p class="bui-group-empty">{{localize "BUI.ConfigPanel.Empty"}}</p>
+  {{/if}}
+
+  <footer class="sheet-footer flexrow">
+    <button type="submit">
+      <i class="fas fa-save"></i>
+      {{localize "SETTINGS.Save"}}
+    </button>
+  </footer>
+</form>

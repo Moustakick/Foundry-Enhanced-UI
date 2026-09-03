@@ -1,0 +1,47 @@
+{
+  "id": "Foundry Enhanced UI",
+  "title": "Foundry Enhanced UI",
+  "description": "Foundry Enhanced UI: a dockable player list (with NPCs, notes, image sharing, and combat tracking), a dice tray, a chat reskin, a cleaner and more streamlined interface, and a Solasta-style combat action bar. Each feature can be enabled or disabled independently, with a centralized color theme system.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "12",
+    "maximum": "12"
+  },
+  "authors": [
+    {
+      "name": "Moustakick"
+    }
+  ],
+  "esmodules": [
+    "scripts/_core.js",
+    "scripts/party-list.js",
+    "scripts/dice-tray.js",
+    "scripts/chat.js",
+    "scripts/ui.js",
+    "scripts/combat-ui.js"
+  ],
+  "styles": [
+    "styles/theme.css",
+    "styles/party-list.css",
+    "styles/dice-tray.css",
+    "styles/chat.css",
+    "styles/ui.css",
+    "styles/combat-ui.css"
+  ],
+  "languages": [
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "url": "",
+  "manifest": "",
+  "download": ""
+}

@@ -1,0 +1,272 @@
+<nav class="bpl-tabs tabs" data-group="primary">
+  <a class="item active" data-tab="party"><i class="fas fa-users"></i> {{localize "BPL.Tabs.Party"}}</a>
+  <a class="item" data-tab="notes"><i class="fas fa-pen"></i> {{localize "BPL.Tabs.Notes"}}</a>
+  <a class="item" data-tab="actions"><i class="fas fa-bolt"></i> {{localize "BPL.Tabs.Actions"}}</a>
+  {{#if isGM}}
+  <a class="item" data-tab="share"><i class="fas fa-share-alt"></i> {{localize "BPL.Tabs.Share"}}</a>
+  {{/if}}
+</nav>
+
+<section class="bpl-panels">
+  <div class="tab bpl-tab-party active" data-tab="party" data-group="primary">
+
+    {{#if combat}}
+    <div class="bpl-combat-view">
+      <div class="bpl-combat-header">
+        <span class="bpl-combat-round"><i class="fas fa-hourglass-half"></i> {{localize "BPL.Combat.Round"}} {{combat.round}}</span>
+        {{#if isGM}}
+        {{#if combat.hasMissingInitiative}}
+        <button type="button" class="bpl-combat-roll-missing" title="{{localize 'BPL.Combat.RollMissing'}}">
+          <i class="fas fa-dice-d20"></i>
+        </button>
+        {{/if}}
+        {{/if}}
+      </div>
+
+      <ol class="bpl-list bpl-combat-list">
+        {{#each combat.turns as |t|}}
+        <li class="bpl-member bpl-combatant {{#if t.isCurrentTurn}}bpl-current-turn{{/if}} {{#if t.defeated}}bpl-defeated{{/if}}"
+            data-combatant-id="{{t.id}}"
+            data-actor-id="{{t.actorId}}"
+            data-user-id="{{t.userId}}"
+            title="{{t.name}}">
+          <div class="bpl-avatar" style="background-image:url('{{t.img}}');">
+            {{#if t.defeated}}<i class="fas fa-skull bpl-defeated-icon"></i>{{/if}}
+            {{#if t.isCurrentTurn}}<span class="bpl-current-turn-badge"><i class="fas fa-play"></i></span>{{/if}}
+            {{#if t.disposition}}<span class="bpl-disposition bpl-disposition-{{t.disposition}}" title="{{t.disposition}}"></span>{{/if}}
+          </div>
+          <div class="bpl-names">
+            <span class="bpl-name">{{t.name}}</span>
+            {{#if t.health}}
+            <div class="bpl-health-bar" title="{{t.health.value}} / {{t.health.max}}">
+              <div class="bpl-health-fill" style="width:{{t.health.percent}}%;background:{{t.health.color}};"></div>
+            </div>
+            {{/if}}
+          </div>
+          <span class="bpl-combat-initiative">{{t.initiative}}</span>
+        </li>
+        {{/each}}
+      </ol>
+
+      {{#if actionBar}}
+      {{#unless actionBar.isEmpty}}
+      <div class="bpl-combat-actions">
+        {{#each actionBar.byActionType as |grp|}}
+        <div class="bpl-action-combat-group">
+          <div class="bpl-action-combat-group-label bpl-action-type-{{grp.key}}">{{grp.label}}</div>
+          <ol class="bpl-action-list bpl-action-list-compact">
+            {{#each grp.items as |a|}}
+            <li class="bpl-action-item" data-item-id="{{a.id}}" data-tooltip="{{a.tooltip}}">
+              <div class="bpl-action-icon" style="background-image:url('{{a.img}}');"></div>
+              <span class="bpl-action-name">{{a.name}}</span>
+              {{#if a.uses}}<span class="bpl-action-uses">{{a.uses}}</span>{{/if}}
+            </li>
+            {{/each}}
+          </ol>
+        </div>
+        {{/each}}
+      </div>
+      {{/unless}}
+      {{/if}}
+
+      {{#if isGM}}
+      <div class="bpl-combat-controls">
+        <button type="button" class="bpl-combat-prev" title="{{localize 'BPL.Combat.Previous'}}">
+          <i class="fas fa-backward-step"></i>
+        </button>
+        <button type="button" class="bpl-combat-next">
+          <i class="fas fa-forward-step"></i> {{localize "BPL.Combat.NextTurn"}}
+        </button>
+        <button type="button" class="bpl-combat-end" title="{{localize 'BPL.Combat.EndCombat'}}">
+          <i class="fas fa-flag"></i>
+        </button>
+      </div>
+      {{else}}
+      <div class="bpl-combat-controls">
+        <button type="button" class="bpl-combat-next" {{#unless combat.isMyTurn}}disabled{{/unless}}>
+          <i class="fas fa-flag-checkered"></i> {{localize "BPL.Combat.EndMyTurn"}}
+        </button>
+      </div>
+      {{/if}}
+    </div>
+
+    {{else}}
+
+    <ol class="bpl-list">
+      {{#each members as |m|}}
+      <li class="bpl-member {{#unless m.active}}bpl-offline{{/unless}} {{#unless m.hasCharacter}}bpl-no-character{{/unless}}"
+          data-actor-id="{{m.actorId}}"
+          data-user-id="{{m.userId}}"
+          title="{{m.name}} ({{m.playerName}})">
+        <div class="bpl-avatar" style="background-image:url('{{m.img}}');{{#if m.color}}--bpl-user-color:{{m.color}};{{/if}}">
+          <span class="bpl-status-dot {{#if m.active}}online{{else}}offline{{/if}}"></span>
+        </div>
+        <div class="bpl-names">
+          <span class="bpl-name">{{#unless m.hasCharacter}}{{localize "BPL.Member.NoCharacter"}}{{else}}{{m.name}}{{/unless}}</span>
+          <span class="bpl-player-name">{{m.playerName}}</span>
+          {{#if m.health}}
+          <div class="bpl-health-bar" title="{{m.health.value}} / {{m.health.max}}">
+            <div class="bpl-health-fill" style="width:{{m.health.percent}}%;background:{{m.health.color}};"></div>
+          </div>
+          {{/if}}
+        </div>
+        {{#if ../isGM}}
+        <button type="button" class="bpl-member-assign" data-user-id="{{m.userId}}" title="{{localize 'BPL.Member.ChangeCharacter'}}">
+          <i class="fas fa-user-pen"></i>
+        </button>
+        {{/if}}
+      </li>
+      {{/each}}
+    </ol>
+    {{#unless members.length}}
+    <p class="bpl-empty">{{localize "BPL.NoMembers"}}</p>
+    {{/unless}}
+
+    {{#if showNpcSection}}
+    <div class="bpl-section-divider"><span>{{localize "BPL.Npc.SectionTitle"}}</span></div>
+
+    {{#if npcs.length}}
+    <ol class="bpl-list bpl-npc-list">
+      {{#each npcs as |n|}}
+      <li class="bpl-member bpl-npc {{#if n.missing}}bpl-npc-missing{{/if}}"
+          data-npc-id="{{n.id}}"
+          data-actor-id="{{n.actorId}}"
+          data-img="{{n.img}}"
+          data-name="{{n.name}}"
+          title="{{n.name}}">
+        <div class="bpl-avatar" style="background-image:url('{{n.img}}');"></div>
+        <span class="bpl-name">{{n.name}}</span>
+        {{#if ../isGM}}
+        <button type="button" class="bpl-npc-remove" data-npc-id="{{n.id}}" title="{{localize 'BPL.Npc.Remove'}}">
+          <i class="fas fa-xmark"></i>
+        </button>
+        {{/if}}
+      </li>
+      {{/each}}
+    </ol>
+    {{/if}}
+
+    {{#if isGM}}
+    <div class="bpl-npc-add">
+      <button type="button" class="bpl-npc-add-toggle"><i class="fas fa-plus"></i> {{localize "BPL.Npc.AddButton"}}</button>
+
+      <div class="bpl-npc-add-panel">
+        <div class="bpl-npc-add-row">
+          <select class="bpl-npc-actor-select">
+            <option value="">{{localize "BPL.Npc.SelectActor"}}</option>
+            {{#each actorOptions as |a|}}
+            <option value="{{a.id}}">{{a.name}}</option>
+            {{/each}}
+          </select>
+          <button type="button" class="bpl-npc-add-actor">{{localize "BPL.Npc.Add"}}</button>
+        </div>
+
+        <div class="bpl-npc-quick-row">
+          <div class="bpl-npc-quick-img" data-img="icons/svg/mystery-man.svg" style="background-image:url('icons/svg/mystery-man.svg')" title="{{localize 'BPL.Npc.PickImage'}}">
+            <i class="fas fa-camera"></i>
+          </div>
+          <input type="text" class="bpl-npc-quick-name" placeholder="{{localize 'BPL.Npc.NamePlaceholder'}}" />
+          <button type="button" class="bpl-npc-add-quick">{{localize "BPL.Npc.Add"}}</button>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+    {{/if}}
+
+    {{/if}}
+  </div>
+
+  <div class="tab bpl-tab-actions" data-tab="actions" data-group="primary">
+    {{#if actionBar}}
+    <div class="bpl-actions-header">
+      <span class="bpl-actions-title"><i class="fas fa-bolt"></i> {{localize "BPL.Actions.Title"}}</span>
+      <button type="button" class="bpl-actions-reset" title="{{localize 'BPL.Actions.Reset'}}">
+        <i class="fas fa-rotate-left"></i>
+      </button>
+    </div>
+
+    {{#if actionBar.isEmpty}}
+    <p class="bpl-empty">{{localize "BPL.Actions.Empty"}}</p>
+    {{else}}
+    {{#each actionBar.categories as |cat|}}
+    <div class="bpl-action-category">
+      <div class="bpl-action-category-header" data-category="{{cat.key}}">
+        <i class="fas fa-chevron-{{#if cat.collapsed}}right{{else}}down{{/if}}"></i>
+        <span>{{cat.label}}</span>
+        <span class="bpl-action-category-count">{{cat.items.length}}</span>
+      </div>
+      {{#unless cat.collapsed}}
+      <ol class="bpl-action-list">
+        {{#each cat.items as |a|}}
+        <li class="bpl-action-item" data-item-id="{{a.id}}" data-tooltip="{{a.tooltip}}">
+          <div class="bpl-action-icon" style="background-image:url('{{a.img}}');"></div>
+          <span class="bpl-action-name">{{a.name}}</span>
+          <span class="bpl-action-type bpl-action-type-{{a.actionType}}">{{a.actionType}}</span>
+          {{#if a.uses}}<span class="bpl-action-uses">{{a.uses}}</span>{{/if}}
+          <button type="button" class="bpl-action-remove" data-item-id="{{a.id}}" title="{{localize 'BPL.Actions.Remove'}}">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+      {{/unless}}
+    </div>
+    {{/each}}
+    {{/if}}
+    <p class="bpl-actions-hint">{{localize "BPL.Actions.DragHint"}}</p>
+    {{else}}
+    <p class="bpl-empty">{{localize "BPL.Actions.NoCharacter"}}</p>
+    {{/if}}
+  </div>
+
+  <div class="tab bpl-tab-notes" data-tab="notes" data-group="primary">
+    <textarea class="bpl-notes-input" placeholder="{{localize 'BPL.Notes.Placeholder'}}">{{notes}}</textarea>
+
+    <div class="bpl-journal-header">
+      <span class="bpl-journal-header-title"><i class="fas fa-book"></i> {{localize "BPL.Notes.JournalsTitle"}}</span>
+      {{#if isGM}}
+      <button type="button" class="bpl-journal-add" title="{{localize 'BPL.Notes.AddJournal'}}">
+        <i class="fas fa-plus"></i>
+      </button>
+      {{/if}}
+    </div>
+    {{#if journals.length}}
+    <ol class="bpl-list bpl-journal-list">
+      {{#each journals as |j|}}
+      <li class="bpl-journal-item" data-journal-id="{{j.id}}" title="{{j.name}}">
+        <i class="fas fa-book"></i>
+        <span class="bpl-journal-name">{{j.name}}</span>
+      </li>
+      {{/each}}
+    </ol>
+    {{else}}
+    <p class="bpl-empty">{{localize "BPL.Notes.NoJournals"}}</p>
+    {{/if}}
+  </div>
+
+  {{#if isGM}}
+  <div class="tab bpl-tab-share" data-tab="share" data-group="primary">
+    <div class="bpl-share-dropzone">
+      <i class="fas fa-upload"></i>
+      <p>{{localize "BPL.Share.DropHint"}}</p>
+      <label class="bpl-share-browse">
+        {{localize "BPL.Share.Browse"}}
+        <input type="file" class="bpl-share-file-input" accept="image/*" multiple hidden />
+      </label>
+    </div>
+
+    <div class="bpl-share-gallery">
+      {{#each gallery as |g|}}
+      <div class="bpl-share-thumb" data-img="{{g.img}}" data-title="{{g.title}}" title="{{g.title}}">
+        <img src="{{g.img}}" alt="{{g.title}}" loading="lazy" />
+        <button type="button" class="bpl-share-resend" data-img="{{g.img}}" data-title="{{g.title}}" title="{{localize 'BPL.Share.Resend'}}">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      {{else}}
+      <p class="bpl-empty">{{localize "BPL.Share.NoImages"}}</p>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+</section>

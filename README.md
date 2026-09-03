@@ -2,6 +2,8 @@
 
 A module for Foundry VTT (v11/v12, dnd5e system) that bundles several UI improvements: a dockable party list, a dice tray, a reworked chat, a decluttered interface, and a combat action bar. Each feature can be enabled or disabled independently.
 
+![presentation image](https://www.maximeocafrain.com/assets/images/projects/vtt.png)
+
 ## Features
 
 ### Party List
